@@ -13,48 +13,6 @@ def load_data(filepath):
     pass
 
 
-def calculate_entropy(dataset):
-    """Calculate entropy of dataset.
-
-    Extended description of function.
-
-    Args:
-        dataset (np.ndarray): 
-
-    Returns:
-        entropy (float)
-    """
-
-
-def find_split(dataset):
-    """Load data.
-
-    Extended description of function.
-
-    Args:
-        filename (str): 
-
-    Returns:
-        attribute (int): integer going from 
-        value (float): 
-        left_dataset (np.ndarray, shape Nleft x 8)
-        right_dataset (np.ndarray, shape Nright x 8)
-
-    """
-
-def decision_tree_learning(training_dataset, depth):
-    """Load data.
-
-    Extended description of function.
-
-    Args:
-        training_dataset (np.ndarray)
-        depth (int)
-
-    Returns:
-        node (Node)
-    """
-
 class DecisionTree:
     def __init__(self, attribute, value, left, right, depth, leaf, label=None):
         """ Attributes:
@@ -118,6 +76,36 @@ class DecisionTreeClassifier():
     def __init__(self):
         self.decision_tree = None
     
+
+    def calculate_entropy(dataset):
+        """Calculate entropy of dataset.
+
+        Extended description of function.
+
+        Args:
+            dataset (np.ndarray): 
+
+        Returns:
+            entropy (float)
+        """
+
+
+    def find_split(dataset):
+        """Load data.
+
+        Extended description of function.
+
+        Args:
+            filename (str): 
+
+        Returns:
+            attribute (int): integer going from 
+            value (float): 
+            left_dataset (np.ndarray, shape Nleft x 8)
+            right_dataset (np.ndarray, shape Nright x 8)
+
+        """
+        
     def decision_tree_learning(training_dataset, depth):
         """Load data.
 
