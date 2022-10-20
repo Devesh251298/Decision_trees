@@ -23,7 +23,7 @@ class DecisionTreeClassifier():
         self.dtree, self.depth = self.decision_tree_learning(np.concatenate((x_train, y_train), axis=0) ,0)
     
     def decision_tree_learning(self, training_dataset, depth):
-        output = np.unique(training_dataset[:,-1]).shape[0]
+        output = np.unique(training_dataset[:,-1])
         if output.shape[0]==1:
         	return DecisionTree(leaf = True, label = output[0], depth = depth)
 
