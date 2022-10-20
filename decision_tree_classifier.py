@@ -1,6 +1,5 @@
 from find_split import find_split
 
-
 class DecisionTree:
     def __init__(self, attribute=0, value=-1, left=None, right=None, depth=-1, leaf=False, label=None):
         self.attribute = attribute
@@ -12,7 +11,7 @@ class DecisionTree:
         self.label = leaf
 
     def __repr__(self):
-        return f"DecisionTree({self.attribute}, {self.value}, {self.leaf})"
+        return f"DecisionTree({self.attribute}, {self.value})"
 
 class DecisionTreeClassifier():
     def __init__(self):
@@ -31,7 +30,6 @@ class DecisionTreeClassifier():
         dtree = DecisionTree(attribute = split_attribute, value = split_value, depth = depth)
         dtree.left, left_depth = self.decision_tree_learning(split_left_dataset, depth+1)
         dtree.right, right_depth = self.decision_tree_learning(split_right_dataset, depth+1)
-        
 
         return dtree, max(dtree.left.depth, dtree.right.depth)
         
