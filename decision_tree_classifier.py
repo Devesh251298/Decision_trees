@@ -17,6 +17,9 @@ class DecisionTree:
 class DecisionTreeClassifier():
     def __init__(self):
         self.dtree = None
+
+    def fit(self, x_train, y_train):
+        self.dtree = self.decision_tree_learning(np.concatenate((x_train, y_train), axis=0) ,0)
     
     def decision_tree_learning(self, training_dataset, depth):
         output = np.unique(training_dataset[:,-1]).shape[0]
@@ -29,6 +32,5 @@ class DecisionTreeClassifier():
         dtree.right = self.decision_tree_learning(split_right_dataset, depth+1)
         dtree.depth = max(dtree.left.depth, dtree.right.depth)
 
-        self.dtree = dtree
         return dtree
         
