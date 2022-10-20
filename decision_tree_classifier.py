@@ -24,7 +24,7 @@ class DecisionTreeClassifier():
     def decision_tree_learning(self, training_dataset, depth):
         output = np.unique(training_dataset[:,-1]).shape[0]
         if output.shape[0]==1:
-        	return DecisionTree(leaf = True, label = output[0], depth = depth)
+        	return DecisionTree(leaf = True, label = output[0], depth = 0)
 
         split_attribute, split_value, split_left_dataset, split_right_dataset = find_split(training_dataset)
         dtree = DecisionTree(attribute = split_attribute, value = split_value, depth = depth)
