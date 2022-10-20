@@ -75,7 +75,7 @@ def find_split(dataset):
             right_entropy = calculate_entropy(right_dataset)
             
             # calculate information gain
-            info_gain = dataset_entropy - (i/N * left_entropy + (N-i)-N * right_entropy)
+            info_gain = dataset_entropy - (i/N * left_entropy + (N-i)/N * right_entropy)
             
             # if information gain is larger than the current maximum, update variables
             if info_gain > max_info_gain:
