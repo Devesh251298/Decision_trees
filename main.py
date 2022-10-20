@@ -10,7 +10,9 @@ def load_data(filepath):
         dataset (np.ndarray(Nx8)): dataset
 
     """
-    pass
+    File_data = np.loadtxt(filepath, dtype=int)
+    return File_data
+    
 
 
 def calculate_entropy(dataset):
