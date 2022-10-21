@@ -33,13 +33,35 @@ class DecisionTreeClassifier():
         dtree.right, right_depth = self.decision_tree_learning(split_right_dataset, depth+1)
 
         return dtree, max(left_depth, right_depth)
-        
+
+    def predict(self, y_test):
+        output = []
+        for i in range(y_test.shape[0]):
+            tree = self.dtree
+            while tree.leaf!=True:
+                attr = tree.attribute
+                val = tree.value
+                if y_test[i][attr] >= val:
+                    tree = tree.right
+                else:
+                    tree = tree.left
+            output.append(tree.label)
+        return output, y_test[:,-1]
+
 def test_decision_tree():
-    dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
+    dataset = np.loadtxt("wifi_db/noisy_dataset.txt", dtype=float)
     dtree = DecisionTreeClassifier()
     dtree.fit(dataset)
     print(dtree.depth)
     parse_tree(dtree.dtree)
+    output, actual = dtree.predict(dataset)
+    print(len(output), len(actual))
+    count = 0
+    for i in range(len(output)):
+        if output[i] == actual[i]:
+            count+=1
+    print("Accuracy = ", (count*100)/len(output))
+
     #print(f"attribute: {attribute}, value: {value}, left dataset: {left_dataset.shape}, right dataset: {right_dataset.shape}")
     
 
