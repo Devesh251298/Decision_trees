@@ -1,3 +1,5 @@
+import numpy as np
+
 def calculate_entropy(dataset):
     """Calculate entropy of a label distribution.
 

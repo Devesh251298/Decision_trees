@@ -1,7 +1,7 @@
 import numpy as np
-
-def calculate_entropy(dataset):
-    return 2
+from calculate_entropy import calculate_entropy
+# def calculate_entropy(dataset):
+#     return 2
 
 def find_split(dataset):
     """Find split that maximizes information gain in dataset.
