@@ -9,10 +9,10 @@ class DecisionTree:
         self.right = right
         self.depth = depth
         self.leaf = leaf
-        self.label = leaf
+        self.label = label
 
     def __repr__(self):
-        return f"DecisionTree({self.attribute}, {self.value})"
+        return f"DecisionTree(Attr : {self.attribute}, Value : {self.value}, Depth : {self.depth}, Label : {self.label})"
 
 class DecisionTreeClassifier():
     def __init__(self):
@@ -23,10 +23,9 @@ class DecisionTreeClassifier():
         self.dtree, self.depth = self.decision_tree_learning(dataset,0)
     
     def decision_tree_learning(self, training_dataset, depth):
-        print(training_dataset.shape, depth)
         output = np.unique(training_dataset[:,-1])
         if output.shape[0]==1:
-        	return DecisionTree(leaf = True, label = output[0], depth = depth), depth
+            return DecisionTree(leaf = True, label = output[0], depth = depth), depth
 
         split_attribute, split_value, split_left_dataset, split_right_dataset = find_split(training_dataset)
         dtree = DecisionTree(attribute = split_attribute, value = split_value, depth = depth)
@@ -40,8 +39,19 @@ def test_decision_tree():
     dtree = DecisionTreeClassifier()
     dtree.fit(dataset)
     print(dtree.depth)
+    parse_tree(dtree.dtree)
     #print(f"attribute: {attribute}, value: {value}, left dataset: {left_dataset.shape}, right dataset: {right_dataset.shape}")
     
+
+def parse_tree(node):
+
+    if node.left!=None:
+        parse_tree(node.left)
+    if node.right!=None:
+        parse_tree(node.right)
+
+    print(node)
+
 if __name__ == "__main__":
     test_decision_tree()
 
