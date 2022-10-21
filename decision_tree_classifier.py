@@ -33,7 +33,7 @@ class DecisionTreeClassifier():
         dtree.left, left_depth = self.decision_tree_learning(split_left_dataset, depth+1)
         dtree.right, right_depth = self.decision_tree_learning(split_right_dataset, depth+1)
 
-        return dtree, max(dtree.left.depth, dtree.right.depth)
+        return dtree, max(left_depth, right_depth)
         
 def test_decision_tree():
     dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
