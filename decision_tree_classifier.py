@@ -1,4 +1,5 @@
 from find_split import find_split
+from evaluation_metrics import get_confusion_matrix, get_accuracy, get_precision, get_recall, get_f1_score
 import numpy as np
 
 class DecisionTree:
@@ -61,7 +62,13 @@ def evaluate(classifier, X_test, y_test):
         precision
         f1_measure
     """
-    return [0,0],0,0,0,[0,0]
+    y_pred = classifier.predict(X_test)
+    confusion_matrix = get_confusion_matrix(y_test, y_pred)
+    accuracy = get_accuracy(confusion_matrix)
+    precision = get_precision(confusion_matrix)
+    recall = get_recall(confusion_matrix)
+    f1_score = get_f1_score(precision, recall)
+    return confusion_matrix, accuracy, precision, recall, f1_score
 
 def cross_validation(dataset, k=10):
     """ Evaluate.
@@ -96,8 +103,7 @@ def cross_validation(dataset, k=10):
 
         classifier = DecisionTreeClassifier()
         classifier.fit(d)
-
-        c, a, r, p, f = evaluate(classifier, batches[i][:,:-2], batches[i][:,-1])
+        c, a, p, r, f = evaluate(classifier, batches[i][:,:-1], batches[i][:,-1])
         output, actual = classifier.predict(batches[i])
         count = 0
 
