@@ -1,6 +1,7 @@
 from find_split import find_split
 from evaluation_metrics import get_confusion_matrix, get_accuracy, get_precision, get_recall, get_f1_score
 import numpy as np
+from sklearn import tree
 
 class DecisionTree:
     def __init__(self, attribute=0, value=-1, left=None, right=None, depth=-1, leaf=False, label=None):
@@ -91,21 +92,27 @@ def cross_validation(dataset, k=10):
     batches = np.split(dataset, k)
     confusion_matrix, accuracy, recall, precision, f1_measure = [], [], [], [], []
    
+
     for i in range(k):
         d = None
-        for j in range(k):
-            if i==j:
-                continue
-            if not isinstance(d,np.ndarray):
-                d = batches[j]
-            else:
-                d = np.append(d,batches[j],axis=0)
+        if k!=1:
+            for j in range(k):
+                if i==j:
+                    continue
+                if not isinstance(d,np.ndarray):
+                    d = batches[j]
+                else:
+                    d = np.append(d,batches[j],axis=0)
+
+        else:
+            d = dataset
 
         classifier = DecisionTreeClassifier()
         classifier.fit(d)
         c, a, p, r, f = evaluate(classifier, batches[i][:,:-1], batches[i][:,-1])
         output, actual = classifier.predict(batches[i])
         count = 0
+
 
         for i1 in range(len(output)):
             if output[i1] == actual[i1]:
@@ -122,7 +129,7 @@ def cross_validation(dataset, k=10):
     accuracy  = np.average(np.array(accuracy))
     recall  = np.average(np.array(recall))
     precision  = np.average(np.array(precision))
-    f1_measure  = np.average(np.array(f1_measure), axis=0)
+    f1_measure  = np.average(np.array(f1_measure))
 
     return confusion_matrix, accuracy, recall, precision, f1_measure
 
@@ -132,7 +139,7 @@ def test_decision_tree():
     dtree = DecisionTreeClassifier()
     dtree.fit(dataset)
     print(dtree.depth)
-    parse_tree(dtree.dtree)
+    # parse_tree(dtree.dtree)
     output, actual = dtree.predict(dataset)
     print(len(output), len(actual))
 
