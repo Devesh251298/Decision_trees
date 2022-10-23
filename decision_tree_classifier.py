@@ -48,30 +48,104 @@ class DecisionTreeClassifier():
             output.append(tree.label)
         return output, y_test[:,-1]
 
+def evaluate(classifier, X_test, y_test):
+    """ Evaluate.
+    
+    Args:
+        classifier (DecisionTreeClassifier)
+        X_test (np.ndarray)
+    Returns:
+        confusion_matrix
+        accuracy
+        recall
+        precision
+        f1_measure
+    """
+    return [0,0],0,0,0,[0,0]
+
+def cross_validation(dataset, k=10):
+    """ Evaluate.
+    
+    1) Split dataset into 10 parts
+    2) Loop with 10 iterations. For each iteration:
+        - train decision tree with training dataset
+        - get evaluation metrics for the test dataset (get confusio
+    
+    Args:
+        dataset (np.ndarray) 
+    Returns:
+        confusion_matrix
+        accuracy
+        recall
+        precision
+        f1_measure
+    """
+    np.random.shuffle(dataset)
+    batches = np.split(dataset, k)
+    confusion_matrix, accuracy, recall, precision, f1_measure = [], [], [], [], []
+   
+    for i in range(k):
+        d = None
+        for j in range(k):
+            if i==j:
+                continue
+            if not isinstance(d,np.ndarray):
+                d = batches[j]
+            else:
+                d = np.append(d,batches[j],axis=0)
+
+        classifier = DecisionTreeClassifier()
+        classifier.fit(d)
+
+        c, a, r, p, f = evaluate(classifier, batches[i][:,:-2], batches[i][:,-1])
+        output, actual = classifier.predict(batches[i])
+        count = 0
+
+        for i1 in range(len(output)):
+            if output[i1] == actual[i1]:
+                count+=1
+
+        print(f"Accuracy for Batch {i+1} = ", (count*100)/len(output))
+        confusion_matrix.append(c)
+        accuracy.append(a)
+        recall.append(r)
+        precision.append(p)
+        f1_measure.append(f)
+
+    confusion_matrix = np.average(np.array(confusion_matrix), axis=0)
+    accuracy  = np.average(np.array(accuracy))
+    recall  = np.average(np.array(recall))
+    precision  = np.average(np.array(precision))
+    f1_measure  = np.average(np.array(f1_measure), axis=0)
+
+    return confusion_matrix, accuracy, recall, precision, f1_measure
+
+
 def test_decision_tree():
-    dataset = np.loadtxt("wifi_db/noisy_dataset.txt", dtype=float)
+    dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
     dtree = DecisionTreeClassifier()
     dtree.fit(dataset)
     print(dtree.depth)
     parse_tree(dtree.dtree)
     output, actual = dtree.predict(dataset)
     print(len(output), len(actual))
+
     count = 0
     for i in range(len(output)):
         if output[i] == actual[i]:
             count+=1
-    print("Accuracy = ", (count*100)/len(output))
+    print("Overall Accuracy = ", (count*100)/len(output))
+
+    print(cross_validation(dataset, 10))
+
 
     #print(f"attribute: {attribute}, value: {value}, left dataset: {left_dataset.shape}, right dataset: {right_dataset.shape}")
-    
 
 def parse_tree(node):
-
     if node.left!=None:
         parse_tree(node.left)
     if node.right!=None:
         parse_tree(node.right)
-
     print(node)
 
 if __name__ == "__main__":
