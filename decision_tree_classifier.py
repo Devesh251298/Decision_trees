@@ -70,6 +70,44 @@ def evaluate(classifier, X_test, y_test):
     f1_score = get_f1_score(precision, recall)
     return confusion_matrix, accuracy, precision, recall, f1_score
 
+def get_list_preleaf_nodes(classifier):
+    pass
+
+def pruning(classifier, test_dataset):
+    """ Prune the classifier to maximize accuracy.
+    
+    Algorithm:
+    
+    while True:
+        accuracy = get_accuracy(classifier, y_test, y_pred)
+        pre_leaf_nodes = get_list_of_preleaf_nodes(classifier)
+        max_accuracy = accuracy
+        for node in pre_leaf_nodes:
+            new_classifier = prune(node, classifier)
+            new_accuracy = get_accuracy(new_classifier)
+            if new_accuracy > accuracy:
+            return classifier
+        else:
+            classifier <- pruned classifier
+            continue
+    
+    
+    Args:
+        classifier (DecisionTreeClassifier)
+        X_test
+        y_test
+    
+    Returns:
+        pruned_classifier (DecisionTreeClassifier)
+        evaluation_metrics: dictionary with keys:
+            confusion_matrix
+            accuracy
+            precision
+            recall
+            f1_score    
+    """
+    return None
+
 def cross_validation(dataset, k=10):
     """ Evaluate.
     
@@ -117,6 +155,8 @@ def cross_validation(dataset, k=10):
         recall.append(r)
         precision.append(p)
         f1_measure.append(f)
+        
+        pruned_metrics = pruning(classifier, batches[i])
 
     confusion_matrix = np.average(np.array(confusion_matrix), axis=0)
     accuracy  = np.average(np.array(accuracy))
