@@ -122,13 +122,13 @@ def cross_validation(dataset, k=10):
             if output[i1] == actual[i1]:
                 count+=1
 
-        print(f"Accuracy for Batch {i+1} = ", (count*100)/len(output))
+        print(f"Accuracy for Batch {i+1} = ", (count*100)/len(output), " Depth = ", classifier.depth)
         clf = DecisionTreeClassifier(criterion = "entropy")
         clf.fit(d[:,:-1], d[:,-1])
         predictions = clf.predict(batches[i][:,:-1])
 
         from sklearn.metrics import accuracy_score
-        print(f"Bench Mark Accuracy = ",100*accuracy_score(batches[i][:,-1], predictions))
+        print(f"Bench Mark Accuracy = ",100*accuracy_score(batches[i][:,-1], predictions), " Depth = ", clf.tree_.max_depth)
 
         confusion_matrix.append(c)
         accuracy.append(a)
@@ -146,7 +146,7 @@ def cross_validation(dataset, k=10):
 
 
 def test_decision_tree():
-    dataset = np.loadtxt("wifi_db/noisy_dataset.txt", dtype=float)
+    dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
     dtree = DecisionTree_Classifier()
     dtree.fit(dataset)
     # parse_tree(dtree.dtree)
@@ -174,6 +174,9 @@ def test_decision_tree():
     print(text_representation)
 
     parse_tree(dtree.dtree)
+
+    print(dtree.depth)
+    print(clf.tree_.max_depth)
 
 
 def parse_tree(node):
