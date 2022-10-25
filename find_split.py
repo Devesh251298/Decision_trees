@@ -24,7 +24,7 @@ def find_split(dataset):
     dataset_entropy = calculate_entropy(dataset)
     
     # initialize the target variables defining split
-    max_info_gain = -1
+    max_info_gain = -np.inf
     
     # iterate over all attributes to find the splitting attribute
     for attribute in range(num_attributes):
@@ -33,16 +33,22 @@ def find_split(dataset):
         
         # get indices of the dataset sorted according to that attribute
         sorted_indices = np.argsort(values)
-        
+        x = np.unique(values[sorted_indices])
+        # Spliting set to mid points between data points
+        x = x[:-1] + np.diff(x)/2
+
         # iterate from smallest to largest value and find optimal splitting point
-        for i, index in enumerate(sorted_indices):
-            value = dataset[index, attribute]
+        for i in x:
+            value = i
             
             # split dataset on the condition
             # left_dataset -> attribute <= value
             # right_dataset ->  attribute > value
-            left_dataset = dataset[sorted_indices[:i+1]]
-            right_dataset = dataset[sorted_indices[i+1:]]
+            right_indices = np.nonzero(values >= value)
+            left_indices = np.nonzero(values < value)
+
+            left_dataset = dataset[left_indices]
+            right_dataset = dataset[right_indices]
 
             # calculate left and right entropies
             left_entropy = calculate_entropy(left_dataset)

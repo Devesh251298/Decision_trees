@@ -1,10 +1,12 @@
 from find_split import find_split
 from evaluation_metrics import get_confusion_matrix, get_accuracy, get_precision, get_recall, get_f1_score
 import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+
 from sklearn import tree
 
 class DecisionTree:
-    def __init__(self, attribute=0, value=-1, left=None, right=None, depth=-1, leaf=False, label=None):
+    def __init__(self, attribute=0, value=-1, left=None, right=None, depth=-1, leaf=False, label=None, parent = None):
         self.attribute = attribute
         self.value = value
         self.left = left
@@ -12,11 +14,12 @@ class DecisionTree:
         self.depth = depth
         self.leaf = leaf
         self.label = label
+        self.parent = parent
 
     def __repr__(self):
         return f"DecisionTree(Attr : {self.attribute}, Value : {self.value}, Depth : {self.depth}, Label : {self.label})"
 
-class DecisionTreeClassifier():
+class DecisionTree_Classifier():
     def __init__(self):
         self.dtree = None
         self.depth = 0
@@ -33,6 +36,8 @@ class DecisionTreeClassifier():
         dtree = DecisionTree(attribute = split_attribute, value = split_value, depth = depth)
         dtree.left, left_depth = self.decision_tree_learning(split_left_dataset, depth+1)
         dtree.right, right_depth = self.decision_tree_learning(split_right_dataset, depth+1)
+        dtree.left.parent = dtree
+        dtree.right.parent = dtree
 
         return dtree, max(left_depth, right_depth)
 
@@ -71,44 +76,6 @@ def evaluate(classifier, X_test, y_test):
     f1_score = get_f1_score(precision, recall)
     return confusion_matrix, accuracy, precision, recall, f1_score
 
-def get_list_preleaf_nodes(classifier):
-    pass
-
-def pruning(classifier, test_dataset):
-    """ Prune the classifier to maximize accuracy.
-    
-    Algorithm:
-    
-    while True:
-        accuracy = get_accuracy(classifier, y_test, y_pred)
-        pre_leaf_nodes = get_list_of_preleaf_nodes(classifier)
-        max_accuracy = accuracy
-        for node in pre_leaf_nodes:
-            new_classifier = prune(node, classifier)
-            new_accuracy = get_accuracy(new_classifier)
-            if new_accuracy > accuracy:
-            return classifier
-        else:
-            classifier <- pruned classifier
-            continue
-    
-    
-    Args:
-        classifier (DecisionTreeClassifier)
-        X_test
-        y_test
-    
-    Returns:
-        pruned_classifier (DecisionTreeClassifier)
-        evaluation_metrics: dictionary with keys:
-            confusion_matrix
-            accuracy
-            precision
-            recall
-            f1_score    
-    """
-    return None
-
 def cross_validation(dataset, k=10):
     """ Evaluate.
     
@@ -145,25 +112,29 @@ def cross_validation(dataset, k=10):
         else:
             d = dataset
 
-        classifier = DecisionTreeClassifier()
+        classifier = DecisionTree_Classifier()
         classifier.fit(d)
         c, a, p, r, f = evaluate(classifier, batches[i][:,:-1], batches[i][:,-1])
         output, actual = classifier.predict(batches[i])
         count = 0
-
 
         for i1 in range(len(output)):
             if output[i1] == actual[i1]:
                 count+=1
 
         print(f"Accuracy for Batch {i+1} = ", (count*100)/len(output))
+        clf = DecisionTreeClassifier(criterion = "entropy")
+        clf.fit(d[:,:-1], d[:,-1])
+        predictions = clf.predict(batches[i][:,:-1])
+
+        from sklearn.metrics import accuracy_score
+        print(f"Bench Mark Accuracy = ",100*accuracy_score(batches[i][:,-1], predictions))
+
         confusion_matrix.append(c)
         accuracy.append(a)
         recall.append(r)
         precision.append(p)
         f1_measure.append(f)
-        
-        pruned_metrics = pruning(classifier, batches[i])
 
     confusion_matrix = np.average(np.array(confusion_matrix), axis=0)
     accuracy  = np.average(np.array(accuracy))
@@ -175,30 +146,43 @@ def cross_validation(dataset, k=10):
 
 
 def test_decision_tree():
-    dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
-    dtree = DecisionTreeClassifier()
+    dataset = np.loadtxt("wifi_db/noisy_dataset.txt", dtype=float)
+    dtree = DecisionTree_Classifier()
     dtree.fit(dataset)
-    print(dtree.depth)
     # parse_tree(dtree.dtree)
     output, actual = dtree.predict(dataset)
-    print(len(output), len(actual))
 
     count = 0
     for i in range(len(output)):
         if output[i] == actual[i]:
             count+=1
-    print("Overall Accuracy = ", (count*100)/len(output))
 
+    
     print(cross_validation(dataset, 10))
 
+    clf = DecisionTreeClassifier(criterion = "entropy")
+    print(dataset[:,:-1].shape,dataset[:,-1].shape)
+    clf.fit(dataset[:,:-1], dataset[:,-1])
 
-    #print(f"attribute: {attribute}, value: {value}, left dataset: {left_dataset.shape}, right dataset: {right_dataset.shape}")
+    predictions = clf.predict(dataset[:,:-1])
+
+    from sklearn.metrics import accuracy_score
+    print("Overall Accuracy = ", (count*100)/len(output))
+    print(accuracy_score(dataset[:,-1], predictions))
+
+    text_representation = tree.export_text(clf)
+    print(text_representation)
+
+    parse_tree(dtree.dtree)
+
 
 def parse_tree(node):
+
     if node.left!=None:
         parse_tree(node.left)
     if node.right!=None:
         parse_tree(node.right)
+
     print(node)
 
 if __name__ == "__main__":
