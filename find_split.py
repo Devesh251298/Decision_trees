@@ -41,8 +41,8 @@ def find_split(dataset):
         for i in x:
             value = i
             # split dataset on the condition
-            # left_dataset -> attribute <= value
-            # right_dataset ->  attribute > value
+            # left_dataset -> attribute < value
+            # right_dataset ->  attribute >= value
 
             right_indices = np.nonzero(values >= value)
             left_indices = np.nonzero(values < value)
