@@ -146,7 +146,7 @@ def cross_validation(dataset, k=10):
 
 
 def test_decision_tree():
-    dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
+    dataset = np.loadtxt("wifi_db/noisy_dataset.txt", dtype=float)
     dtree = DecisionTree_Classifier()
     dtree.fit(dataset)
     # parse_tree(dtree.dtree)
@@ -157,7 +157,6 @@ def test_decision_tree():
         if output[i] == actual[i]:
             count+=1
 
-    
     print(cross_validation(dataset, 10))
 
     clf = DecisionTreeClassifier(criterion = "entropy")
