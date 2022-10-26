@@ -1,12 +1,12 @@
 from find_split import find_split
-from evaluation_metrics import get_confusion_matrix, get_accuracy, get_precision, get_recall, get_f1_score
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
-
 from sklearn import tree
 
 class DecisionTree:
-    def __init__(self, attribute=0, value=-1, left=None, right=None, depth=-1, leaf=False, label=None, parent = None):
+    def __init__(self, attribute=0, value=-1, left=None, right=None, 
+                    depth=-1, leaf=False, label=None, parent = None, 
+                    n_instances=0):
         self.attribute = attribute
         self.value = value
         self.left = left
@@ -15,9 +15,15 @@ class DecisionTree:
         self.leaf = leaf
         self.label = label
         self.parent = parent
+        self.n_instances = n_instances
 
     def __repr__(self):
-        return f"DecisionTree(Attr : {self.attribute}, Value : {self.value}, Depth : {self.depth}, Label : {self.label})"
+        return f"DecisionTree(Attr : {self.attribute}, Value : {self.value}, Depth : {self.depth}, Label : {self.label}, Leaf: {self.leaf}, Instances: {self.n_instances})"
+    
+    def is_preleaf(self):
+        if self.left.leaf == True and self.right.leaf == True:
+            return True
+        return False
 
 class DecisionTree_Classifier():
     def __init__(self):
@@ -29,11 +35,14 @@ class DecisionTree_Classifier():
     
     def decision_tree_learning(self, training_dataset, depth):
         output = np.unique(training_dataset[:,-1])
+        n_instances = training_dataset.shape[0]
         if output.shape[0]==1:
-            return DecisionTree(leaf = True, label = output[0], depth = depth), depth
+            return DecisionTree(leaf = True, label = output[0], depth = depth, n_instances = n_instances), depth
 
         split_attribute, split_value, split_left_dataset, split_right_dataset = find_split(training_dataset)
-        dtree = DecisionTree(attribute = split_attribute, value = split_value, depth = depth)
+        dtree = DecisionTree(
+            attribute = split_attribute, value = split_value, 
+            depth = depth, n_instances = n_instances)
         dtree.left, left_depth = self.decision_tree_learning(split_left_dataset, depth+1)
         dtree.right, right_depth = self.decision_tree_learning(split_right_dataset, depth+1)
         dtree.left.parent = dtree
@@ -41,108 +50,26 @@ class DecisionTree_Classifier():
 
         return dtree, max(left_depth, right_depth)
 
-    def predict(self, y_test):
-        output = []
-        for i in range(y_test.shape[0]):
+    def predict(self, x_test):
+        y_pred = np.zeros(x_test.shape[0])
+        for i in range(x_test.shape[0]):
             tree = self.dtree
             while tree.leaf!=True:
                 attr = tree.attribute
                 val = tree.value
-                if y_test[i][attr] >= val:
+                if x_test[i][attr] >= val:
                     tree = tree.right
                 else:
                     tree = tree.left
-            output.append(tree.label)
-        return output, y_test[:,-1]
-
-def evaluate(classifier, X_test, y_test):
-    """ Evaluate.
+            y_pred[i] = tree.label
+        return y_pred
     
-    Args:
-        classifier (DecisionTreeClassifier)
-        X_test (np.ndarray)
-    Returns:
-        confusion_matrix
-        accuracy
-        recall
-        precision
-        f1_measure
-    """
-    y_pred = classifier.predict(X_test)
-    confusion_matrix = get_confusion_matrix(y_test, y_pred)
-    accuracy = get_accuracy(confusion_matrix)
-    precision = get_precision(confusion_matrix)
-    recall = get_recall(confusion_matrix)
-    f1_score = get_f1_score(precision, recall)
-    return confusion_matrix, accuracy, precision, recall, f1_score
-
-def cross_validation(dataset, k=10):
-    """ Evaluate.
+    def compute_accuracy(self, x, y):
+        y_pred = self.predict(x)
+        n_correct = (y_pred == y).sum()
+        n_total = y.shape[0]
+        return n_correct/n_total
     
-    1) Split dataset into 10 parts
-    2) Loop with 10 iterations. For each iteration:
-        - train decision tree with training dataset
-        - get evaluation metrics for the test dataset (get confusio
-    
-    Args:
-        dataset (np.ndarray) 
-    Returns:
-        confusion_matrix
-        accuracy
-        recall
-        precision
-        f1_measure
-    """
-    np.random.shuffle(dataset)
-    batches = np.split(dataset, k)
-    confusion_matrix, accuracy, recall, precision, f1_measure = [], [], [], [], []
-   
-
-    for i in range(k):
-        d = None
-        if k!=1:
-            for j in range(k):
-                if i==j:
-                    continue
-                if not isinstance(d,np.ndarray):
-                    d = batches[j]
-                else:
-                    d = np.append(d,batches[j],axis=0)
-
-        else:
-            d = dataset
-
-        classifier = DecisionTree_Classifier()
-        classifier.fit(d)
-        c, a, p, r, f = evaluate(classifier, batches[i][:,:-1], batches[i][:,-1])
-        output, actual = classifier.predict(batches[i])
-        count = 0
-
-        for i1 in range(len(output)):
-            if output[i1] == actual[i1]:
-                count+=1
-
-        print(f"Accuracy for Batch {i+1} = ", (count*100)/len(output), " Depth = ", classifier.depth)
-        clf = DecisionTreeClassifier(criterion = "entropy")
-        clf.fit(d[:,:-1], d[:,-1])
-        predictions = clf.predict(batches[i][:,:-1])
-
-        from sklearn.metrics import accuracy_score
-        print(f"Bench Mark Accuracy = ",100*accuracy_score(batches[i][:,-1], predictions), " Depth = ", clf.tree_.max_depth)
-
-        confusion_matrix.append(c)
-        accuracy.append(a)
-        recall.append(r)
-        precision.append(p)
-        f1_measure.append(f)
-
-    confusion_matrix = np.average(np.array(confusion_matrix), axis=0)
-    accuracy  = np.average(np.array(accuracy))
-    recall  = np.average(np.array(recall))
-    precision  = np.average(np.array(precision))
-    f1_measure  = np.average(np.array(f1_measure))
-
-    return confusion_matrix, accuracy, recall, precision, f1_measure
 
 
 def test_decision_tree():
