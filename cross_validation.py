@@ -2,7 +2,7 @@ from evaluation_metrics import get_confusion_matrix, get_accuracy, get_precision
 from decision_tree_classifier import DecisionTree, DecisionTree_Classifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
-
+import copy
 import numpy as np
 
 def evaluate(classifier, test_dataset):
@@ -229,6 +229,7 @@ def prune_tree(node, val_dataset):
             else:
                 node.label = node.right.label
             node.n_instances = node.left.n_instances + node.right.n_instances
+            prune_tree(node.parent, val_dataset)
  
 def nested_cross_validation(dataset, k=10):
     """Perform nested cross validation on a Decision Tree Classifier
@@ -287,13 +288,16 @@ def nested_cross_validation(dataset, k=10):
             val_acc = classifier.compute_accuracy(val_dataset[:,:-1], val_dataset[:,-1])
             test_acc = classifier.compute_accuracy(test_dataset[:,:-1], test_dataset[:,-1])
             
+            pre_depth = classifier.compute_depth(classifier.dtree, 0)
             # prune the classifier using the validation dataset
             prune_tree(classifier.dtree, val_dataset)
 
             post_val_acc = classifier.compute_accuracy(val_dataset[:,:-1], val_dataset[:,-1])
             post_test_acc = classifier.compute_accuracy(test_dataset[:,:-1], test_dataset[:,-1])
-            
+            post_depth = classifier.compute_depth(classifier.dtree, 0)
+
             print(f"batch ({i},{j}), val acc {val_acc} -> {post_val_acc}, test acc {test_acc} -> {post_test_acc}")
+            print(f"batch ({i},{j}), depth {pre_depth} -> {post_depth}")
             
             # get evaluation metrics on test dataset
             conf, acc, prec, rec, f1 = evaluate(classifier, test_dataset)
