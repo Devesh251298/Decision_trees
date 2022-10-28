@@ -32,7 +32,7 @@ def visualise_decision_tree(node, tree, ax, x, y, max_x=5, max_y=5, depth=0, max
                     xl = x - 0.1
                     yl = y - 0.1   
                     segments.append([[x, y], [xl, yl]]) 
-                    text = 'Leaf'
+                    text = f'Leaf: {node.left.label}'
                     kwargs['bbox']['facecolor']='green'
                     ax.annotate(text, xy=(xl,yl), **kwargs)
                     line_segments = LineCollection(segments, linewidths=1, linestyle='solid')
@@ -57,7 +57,7 @@ def visualise_decision_tree(node, tree, ax, x, y, max_x=5, max_y=5, depth=0, max
                     xr = x + 0.1
                     yr = y - 0.1 
                     segments.append([[x, y], [xr, yr]])
-                    text = 'Leaf'
+                    text = f'Leaf: {node.right.label}'
                     kwargs['bbox']['facecolor']='green'
                     ax.annotate(text, xy=(xr,yr), **kwargs)
                     line_segments = LineCollection(segments, linewidths=1, linestyle='solid')
