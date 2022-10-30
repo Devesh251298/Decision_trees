@@ -16,7 +16,7 @@ def get_confusion_matrix(actual, predicted):
         for j in range(N):
            # count the number of instances in each combination of actual / predicted classes
            confusion_matrix[i, j] = np.sum((actual == classes[i]) & (predicted == classes[j]))
-
+  
     return confusion_matrix
 
 

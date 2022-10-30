@@ -2,6 +2,7 @@ from find_split import find_split
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
+import copy
 
 class DecisionTree:
     def __init__(self, attribute=0, value=-1, left=None, right=None, 
@@ -69,11 +70,14 @@ class DecisionTree_Classifier():
         n_correct = (y_pred == y).sum()
         n_total = y.shape[0]
         return n_correct/n_total
-    
 
+    def compute_depth(self, node, depth):
+        if node.leaf:
+            return depth
+        return max(self.compute_depth(node.left,depth+1), self.compute_depth(node.right,depth+1))
 
 def test_decision_tree():
-    dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
+    dataset = np.loadtxt("wifi_db/noisy_dataset.txt", dtype=float)
     dtree = DecisionTree_Classifier()
     dtree.fit(dataset)
     # parse_tree(dtree.dtree)
@@ -84,7 +88,6 @@ def test_decision_tree():
         if output[i] == actual[i]:
             count+=1
 
-    
     print(cross_validation(dataset, 10))
 
     clf = DecisionTreeClassifier(criterion = "entropy")

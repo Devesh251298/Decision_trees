@@ -17,7 +17,8 @@ def get_confusion_matrix(actual, predicted):
            # count the number of instances in each combination of actual / predicted classes
            confusion_matrix[i, j] = np.sum((actual == classes[i]) & (predicted == classes[j]))
 
-    return confusion_matrix
+    return confusion_matrix 
+
 
 def test_get_confusion_matrix():
     dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
