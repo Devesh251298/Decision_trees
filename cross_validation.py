@@ -227,7 +227,6 @@ def prune_tree(node, val_dataset):
             else:
                 node.label = node.right.label
             node.n_instances = node.left.n_instances + node.right.n_instances
-            prune_tree(node.parent, val_dataset)
  
 def nested_cross_validation(dataset, k=10):
     """Perform nested cross validation on a Decision Tree Classifier
