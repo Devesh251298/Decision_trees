@@ -100,14 +100,14 @@ def test_visualise():
     # clf = DecisionTreeClassifier(criterion = "entropy")
     # clf.fit(dataset[:,:-1], dataset[:,-1])
     # tree.plot_tree(clf)
-    max_depth = 6
+    max_depth = 5
     grid = np.zeros((max_depth+1,np.power(2,max_depth+1)))
     grid_x = np.zeros((max_depth+1,np.power(2,max_depth+1)))
     grid_y = np.zeros((max_depth+1,np.power(2,max_depth+1)))
     for i in range(max_depth+1):
         grid_y[i,:] = 0.1*i
         for j in range(len(grid_x[i])):
-            grid_x[i,j] = 0.05*(j - int(np.power(2,max_depth+1)/2))
+            grid_x[i,j] = (0.09)*(j - int(np.power(2,max_depth+1)/2))
 
     dtree = DecisionTree_Classifier()
     dtree.fit(dataset)
