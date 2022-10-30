@@ -85,7 +85,6 @@ def cross_validation(dataset, k=10):
         
         # evaluate the classifier on the test dataset
         conf, acc, prec, rec, f1 = evaluate(classifier, test_dataset)
-        
         # update the k fold metrics dictionary
         k_fold_metrics['confusion_matrix'].append(conf)
         k_fold_metrics['precision'].append(prec)
@@ -115,11 +114,10 @@ def cross_validation(dataset, k=10):
     avg_metrics = {}
     avg_metrics['confusion_matrix'] = np.average(
         np.array(k_fold_metrics['confusion_matrix']), axis=0)
-    avg_metrics['accuracy']  = np.average(np.array(k_fold_metrics['accuracy']))
-    avg_metrics['recall']  = np.average(np.array(k_fold_metrics['recall']))
-    avg_metrics['precision']  = np.average(np.array(k_fold_metrics['precision']))
-    avg_metrics['f1_score']  = np.average(np.array(k_fold_metrics['f1_score']))
-
+    avg_metrics['accuracy']  = np.average(np.array(k_fold_metrics['accuracy']), axis=0)
+    avg_metrics['recall']  = np.average(np.array(k_fold_metrics['recall']), axis=0)
+    avg_metrics['precision']  = np.average(np.array(k_fold_metrics['precision']), axis=0)
+    avg_metrics['f1_score']  = np.average(np.array(k_fold_metrics['f1_score']), axis=0)
     return k_fold_metrics, avg_metrics
 
 
@@ -306,18 +304,26 @@ def nested_cross_validation(dataset, k=10):
         # append avg evaluation metrics to the outer  metrics
         k_fold_metrics['confusion_matrix'].append(np.average(
             np.array(inner_metrics['confusion_matrix']), axis=0))
-        k_fold_metrics['accuracy'].append(np.average(np.array(inner_metrics['accuracy'])))
-        k_fold_metrics['recall'].append(np.average(np.array(inner_metrics['recall'])))
-        k_fold_metrics['precision'].append(np.average(np.array(inner_metrics['precision'])))
-        k_fold_metrics['f1_score'].append(np.average(np.array(inner_metrics['f1_score'])))
+        k_fold_metrics['accuracy'].append(
+            np.average(np.array(inner_metrics['accuracy']), axis=0))
+        k_fold_metrics['recall'].append(
+            np.average(np.array(inner_metrics['recall']), axis=0))
+        k_fold_metrics['precision'].append(
+            np.average(np.array(inner_metrics['precision']), axis=0))
+        k_fold_metrics['f1_score'].append(
+            np.average(np.array(inner_metrics['f1_score']), axis=0))
     
     avg_metrics = {}
     avg_metrics['confusion_matrix'] = np.average(
         np.array(k_fold_metrics['confusion_matrix']), axis=0)
-    avg_metrics['accuracy']  = np.average(np.array(k_fold_metrics['accuracy']))
-    avg_metrics['recall']  = np.average(np.array(k_fold_metrics['recall']))
-    avg_metrics['precision']  = np.average(np.array(k_fold_metrics['precision']))
-    avg_metrics['f1_score']  = np.average(np.array(k_fold_metrics['f1_score']))
+    avg_metrics['accuracy']  = np.average(
+        np.array(k_fold_metrics['accuracy']), axis=0)
+    avg_metrics['recall']  = np.average(
+        np.array(k_fold_metrics['recall']), axis=0)
+    avg_metrics['precision']  = np.average(
+        np.array(k_fold_metrics['precision']), axis=0)
+    avg_metrics['f1_score']  = np.average(
+        np.array(k_fold_metrics['f1_score']), axis=0)
 
     return k_fold_metrics, avg_metrics
 
