@@ -15,7 +15,7 @@ def visualise_decision_tree(node, tree, ax, x, y, grid = [], grid_x = [], grid_y
                 ha="center",
                 va="center",
                 arrowprops=dict(arrowstyle="<-",edgecolor=plt.rcParams["text.color"]),
-                fontsize=8
+                fontsize=6
                 )
     segments = []
 
@@ -95,19 +95,14 @@ def visualise_decision_tree(node, tree, ax, x, y, grid = [], grid_x = [], grid_y
 
 def test_visualise():
     dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
-    # from sklearn.tree import DecisionTreeClassifier
-    # from sklearn import tree
-    # clf = DecisionTreeClassifier(criterion = "entropy")
-    # clf.fit(dataset[:,:-1], dataset[:,-1])
-    # tree.plot_tree(clf)
-    max_depth = 5
+    max_depth = 10
     grid = np.zeros((max_depth+1,np.power(2,max_depth+1)))
     grid_x = np.zeros((max_depth+1,np.power(2,max_depth+1)))
     grid_y = np.zeros((max_depth+1,np.power(2,max_depth+1)))
     for i in range(max_depth+1):
         grid_y[i,:] = 0.1*i
         for j in range(len(grid_x[i])):
-            grid_x[i,j] = (0.09)*(j - int(np.power(2,max_depth+1)/2))
+            grid_x[i,j] = (0.0005)*(j - int(np.power(2,max_depth+1)/2))
 
     dtree = DecisionTree_Classifier()
     dtree.fit(dataset)
@@ -115,8 +110,6 @@ def test_visualise():
     
     fig, ax = plt.subplots(figsize=(10,10))
     visualise_decision_tree(node=dtree.dtree, tree=dtree, grid = grid, grid_x = grid_x, grid_y = grid_y,x=np.power(2,max_depth), y=max_depth, ax=ax, max_depth=max_depth, max_x=6, max_y=5)
-    ax.set_ylim(0.25,1.1)
-    ax.set_xlim(-2,2)
     ax.axis('off')
    
   

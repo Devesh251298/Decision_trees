@@ -2,19 +2,19 @@ import numpy as np
 #from decision_tree_classifier import DecisionTreeClassifier, parse_tree
 
 def get_confusion_matrix(actual, predicted):
-    # extract the different classes
+    # Extract the different classes
     classes = np.unique(actual)
     
-    # size of matrix
+    # Size of confusion matrix 
     N = len(classes)
 
-    # initialize the (N x N) confusion matrix
+    # Initialize the (N x N) confusion matrix
     confusion_matrix = np.zeros((N, N))
 
-    # loop across the different combinations of actual / predicted classes
+    # Loop through all combination of actual and predicted classes
     for i in range(N):
         for j in range(N):
-           # count the number of instances in each combination of actual / predicted classes
+           # Count the number of instances in each combination of actual and predicted classes
            confusion_matrix[i, j] = np.sum((actual == classes[i]) & (predicted == classes[j]))
   
     return confusion_matrix
@@ -22,25 +22,25 @@ def get_confusion_matrix(actual, predicted):
 
 def get_accuracy(conf_matrix):
     """ Get accuracy by class from confusion matrix."""
-    # compute the total number of instances in each class
+    # Compute the total number of instances in each class
     actual_num = conf_matrix.sum()
-    # compute the total number of correct predicitons per class
+    # Compute the total number of correct predicitons per class
     correct_num = np.diagonal(conf_matrix).sum()
     return correct_num / actual_num
 
 def get_precision(conf_matrix):
     """ Get precision by class from confusion matrix."""
-    # compute the total number of instances in each class
+    # Compute the total number of instances in each class
     actual_num_per_class = conf_matrix.sum(axis=1)
-    # compute the total number of correct predicitons per class
+    # Compute the total number of correct predicitons per class
     correct_num_per_class = np.diagonal(conf_matrix)
     return correct_num_per_class / actual_num_per_class
 
 def get_recall(conf_matrix):
     """ Get recall by class from confusion matrix."""
-    # compute the total number of instances in each class
+    # Compute the total number of instances in each class
     pred_num_per_class = conf_matrix.sum(axis=0)
-    # compute the total number of correct predicitons per class
+    # Compute the total number of correct predicitons per class
     correct_num_per_class = np.diagonal(conf_matrix)
     return correct_num_per_class / pred_num_per_class
 
