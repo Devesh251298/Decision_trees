@@ -40,22 +40,22 @@ if __name__ == '__main__':
     
     #### Report - Step 3
     # Display evaluation metrics for 10-fold cv without pruning
-    print(50*'-'+"\n Step 3 - 10-fold cross-validation:\n"+50*'-')
-    print(50*'-'+"\nEvaluation metrics on clean dataset:\n"+50*'-')
+    print(60*'-'+"\n Step 3 - 10-fold cross-validation:\n"+60*'-')
+    print(60*'-'+"\nEvaluation metrics on clean dataset:\n"+60*'-')
     display_metrics(avg_metrics)
-    print(50*'-'+"\nEvaluation metrics on noisy dataset:\n"+50*'-')
+    print(60*'-'+"\nEvaluation metrics on noisy dataset:\n"+60*'-')
     display_metrics(noisy_avg_metrics)
     
     #### Report - Step 4
     # Display evaluation metrics for nested 10-fold cv with pruning
-    print(50*'-'+"\n Step 4 - nested 10-fold cross-validation with pruning:\n"+50*'-')
-    print(50*'-'+"\nEvaluation metrics on clean dataset (before pruning):\n"+50*'-')
+    print(60*'-'+"\n Step 4 - nested 10-fold cross-validation with pruning:\n"+60*'-')
+    print(60*'-'+"\nEvaluation metrics on clean dataset (before pruning):\n"+60*'-')
     display_metrics(unprun_metrics)
-    print(50*'-'+"\nEvaluation metrics on clean dataset (after pruning):\n"+50*'-')
+    print(60*'-'+"\nEvaluation metrics on clean dataset (after pruning):\n"+60*'-')
     display_metrics(prun_metrics)
-    print(50*'-'+"\nEvaluation metrics on noisy dataset (before pruning):\n"+50*'-')
+    print(60*'-'+"\nEvaluation metrics on noisy dataset (before pruning):\n"+60*'-')
     display_metrics(noisy_unprun_metrics)
-    print(50*'-'+"\nEvaluation metrics on noisy dataset (after pruning):\n"+50*'-')
+    print(60*'-'+"\nEvaluation metrics on noisy dataset (after pruning):\n"+60*'-')
     display_metrics(noisy_prun_metrics)
 
 
