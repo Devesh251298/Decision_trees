@@ -1,6 +1,30 @@
 import numpy as np
 #from decision_tree_classifier import DecisionTreeClassifier, parse_tree
 
+
+def evaluate(classifier, test_dataset):
+    """ Evaluate.
+    
+    Args:
+        classifier (DecisionTreeClassifier)
+        X_test (np.ndarray)
+    Returns:
+        confusion_matrix
+        accuracy
+        recall
+        precision
+        f1_measure
+    """
+    X_test, y_test = test_dataset[:,:-1], test_dataset[:,-1]
+    y_pred = classifier.predict(X_test)
+    confusion_matrix = get_confusion_matrix(y_test, y_pred)
+    accuracy = get_accuracy(confusion_matrix)
+    precision = get_precision(confusion_matrix)
+    recall = get_recall(confusion_matrix)
+    f1_score = get_f1_score(precision, recall)
+    return confusion_matrix, accuracy, precision, recall, f1_score
+
+
 def get_confusion_matrix(actual, predicted):
     # Extract the different classes
     classes = np.unique(actual)
@@ -28,6 +52,7 @@ def get_accuracy(conf_matrix):
     correct_num = np.diagonal(conf_matrix).sum()
     return correct_num / actual_num
 
+
 def get_precision(conf_matrix):
     """ Get precision by class from confusion matrix."""
     # Compute the total number of instances in each class
@@ -36,6 +61,7 @@ def get_precision(conf_matrix):
     correct_num_per_class = np.diagonal(conf_matrix)
     return correct_num_per_class / actual_num_per_class
 
+
 def get_recall(conf_matrix):
     """ Get recall by class from confusion matrix."""
     # Compute the total number of instances in each class
@@ -43,6 +69,7 @@ def get_recall(conf_matrix):
     # Compute the total number of correct predicitons per class
     correct_num_per_class = np.diagonal(conf_matrix)
     return correct_num_per_class / pred_num_per_class
+
 
 def get_f1_score(precision, recall):
     """ Get f1-score by class from precision and recall metrics."""

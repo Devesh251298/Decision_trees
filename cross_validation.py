@@ -1,30 +1,7 @@
-from evaluation_metrics import get_confusion_matrix, get_accuracy, get_precision, get_recall, get_f1_score
+from evaluation_metrics import evaluate
 from decision_tree_classifier import DecisionTree, DecisionTree_Classifier
 import numpy as np
 from prunning import prune_tree
-
-
-def evaluate(classifier, test_dataset):
-    """ Evaluate.
-    
-    Args:
-        classifier (DecisionTreeClassifier)
-        X_test (np.ndarray)
-    Returns:
-        confusion_matrix
-        accuracy
-        recall
-        precision
-        f1_measure
-    """
-    X_test, y_test = test_dataset[:,:-1], test_dataset[:,-1]
-    y_pred = classifier.predict(X_test)
-    confusion_matrix = get_confusion_matrix(y_test, y_pred)
-    accuracy = get_accuracy(confusion_matrix)
-    precision = get_precision(confusion_matrix)
-    recall = get_recall(confusion_matrix)
-    f1_score = get_f1_score(precision, recall)
-    return confusion_matrix, accuracy, precision, recall, f1_score
 
 
 def train_test_k_fold(n_folds, n_instances):
