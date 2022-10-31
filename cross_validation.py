@@ -3,6 +3,43 @@ from decision_tree_classifier import DecisionTree, DecisionTree_Classifier
 import numpy as np
 from prunning import prune_tree
 
+class Metrics:
+    def __init__(self):
+        self.metric_dict = {
+            'confusion_matrix': [],
+            'precision': [],
+            'recall': [],
+            'accuracy': [],
+            'f1_score': [],
+            'depth': []
+        }
+    
+    def add_metrics(self, conf, acc, prec, rec, f1, dep):
+        """ Adds values to a metric dictionary."""
+        self.metric_dict['confusion_matrix'].append(conf)
+        self.metric_dict['precision'].append(prec)
+        self.metric_dict['recall'].append(rec)
+        self.metric_dict['accuracy'].append(acc)
+        self.metric_dict['f1_score'].append(f1)
+        self.metric_dict['depth'].append(dep)
+    
+    def get_avg_metrics(self):
+        """ Return avg metrics dictionary."""
+        avg_metrics = {}
+        avg_metrics['confusion_matrix'] = np.average(
+            np.array(self.metric_dict['confusion_matrix']), axis=0)
+        avg_metrics['accuracy']  = np.average(
+            np.array(self.metric_dict['accuracy']), axis=0)
+        avg_metrics['recall']  = np.average(
+            np.array(self.metric_dict['recall']), axis=0)
+        avg_metrics['precision']  = np.average(
+            np.array(self.metric_dict['precision']), axis=0)
+        avg_metrics['f1_score']  = np.average(
+            np.array(self.metric_dict['f1_score']), axis=0)
+        
+        return avg_metrics
+
+
 
 def train_test_k_fold(n_folds, n_instances):
     """ Split a dataset of length n_instances into n_folds.
@@ -48,14 +85,12 @@ def cross_validation(dataset, k=10):
     # split dataset into k folds
     n_instances = dataset.shape[0]
     split_indices = train_test_k_fold(k, n_instances)
-    k_fold_metrics = {
-        'confusion_matrix': [],
-        'precision': [],
-        'recall': [],
-        'accuracy': [],
-        'f1_score': []
-    }
-
+    
+    # list to store the trained classifiers 
+    trees = []
+    
+    # instantiate a Metrics object to store the evaluation metrics 
+    tree_metrics = Metrics()
     
     # iterate over every fold
     for i, (train_indices, test_indices) in enumerate(split_indices):
@@ -71,27 +106,17 @@ def cross_validation(dataset, k=10):
         
         # evaluate the classifier on the test dataset
         conf, acc, prec, rec, f1 = evaluate(classifier, test_dataset)
-        
-        # update the k fold metrics dictionary
-        k_fold_metrics['confusion_matrix'].append(conf)
-        k_fold_metrics['precision'].append(prec)
-        k_fold_metrics['recall'].append(rec)
-        k_fold_metrics['accuracy'].append(acc)
-        k_fold_metrics['f1_score'].append(f1)
-        
-    avg_metrics = {}
-    avg_metrics['confusion_matrix'] = np.average(
-        np.array(k_fold_metrics['confusion_matrix']), axis=0)
-    avg_metrics['accuracy']  = np.average(
-        np.array(k_fold_metrics['accuracy']), axis=0)
-    avg_metrics['recall']  = np.average(
-        np.array(k_fold_metrics['recall']), axis=0)
-    avg_metrics['precision']  = np.average(
-        np.array(k_fold_metrics['precision']), axis=0)
-    avg_metrics['f1_score']  = np.average(
-        np.array(k_fold_metrics['f1_score']), axis=0)
+    
+        # compute depth of the trained tree
+        dep = classifier.compute_depth(classifier.dtree, 0)
 
-    return k_fold_metrics, avg_metrics
+        # update the k fold metrics dictionary
+        tree_metrics.add_metrics(conf, acc, prec, rec, f1, dep)
+        trees.append(classifier)
+        
+    avg_metrics = tree_metrics.get_avg_metrics()
+
+    return trees, tree_metrics.metric_dict, avg_metrics
 
 
 
@@ -121,8 +146,10 @@ def nested_cross_validation(dataset, k=10):
         'precision': [],
         'recall': [],
         'accuracy': [],
-        'f1_score': []
+        'f1_score': [],
+        'depth': []
     }
+    k_fold_trees = []
     
     # outer cross validation loop
     for i, (trainval_indices, test_indices) in enumerate(outter_split_indices):
@@ -134,19 +161,21 @@ def nested_cross_validation(dataset, k=10):
         inner_split_indices = train_test_k_fold(
             n_inner_folds, n_inner_instances)
         
-        # inner cross validation loop
+        inner_trees = []
         inner_metrics = {
                 'confusion_matrix': [],
                 'precision': [],
                 'recall': [],
                 'accuracy': [],
-                'f1_score': []
+                'f1_score': [],
+                'depth':[]
         }
+
+        # inner cross validation loop
         for j, (train_indices, val_indices) in enumerate(inner_split_indices):
             train_dataset = trainval_dataset[train_indices,:]
             val_dataset = trainval_dataset[val_indices,:]
 
-            
             # train a DecisionTree classifier on the train dataset
             classifier = DecisionTree_Classifier()
             classifier.fit(train_dataset)
@@ -154,6 +183,7 @@ def nested_cross_validation(dataset, k=10):
             test_acc = classifier.compute_accuracy(test_dataset[:,:-1], test_dataset[:,-1])
             
             pre_depth = classifier.compute_depth(classifier.dtree, 0)
+
             # prune the classifier using the validation dataset
             prune_tree(classifier.dtree, val_dataset)
 
