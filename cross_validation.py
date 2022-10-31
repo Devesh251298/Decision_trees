@@ -82,10 +82,14 @@ def cross_validation(dataset, k=10):
     avg_metrics = {}
     avg_metrics['confusion_matrix'] = np.average(
         np.array(k_fold_metrics['confusion_matrix']), axis=0)
-    avg_metrics['accuracy']  = np.average(np.array(k_fold_metrics['accuracy']), axis=0)
-    avg_metrics['recall']  = np.average(np.array(k_fold_metrics['recall']), axis=0)
-    avg_metrics['precision']  = np.average(np.array(k_fold_metrics['precision']), axis=0)
-    avg_metrics['f1_score']  = np.average(np.array(k_fold_metrics['f1_score']), axis=0)
+    avg_metrics['accuracy']  = np.average(
+        np.array(k_fold_metrics['accuracy']), axis=0)
+    avg_metrics['recall']  = np.average(
+        np.array(k_fold_metrics['recall']), axis=0)
+    avg_metrics['precision']  = np.average(
+        np.array(k_fold_metrics['precision']), axis=0)
+    avg_metrics['f1_score']  = np.average(
+        np.array(k_fold_metrics['f1_score']), axis=0)
 
     return k_fold_metrics, avg_metrics
 
