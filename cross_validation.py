@@ -1,44 +1,7 @@
-from evaluation_metrics import evaluate
+from evaluation_metrics import evaluate, Metrics
 from decision_tree_classifier import DecisionTree, DecisionTree_Classifier
 import numpy as np
 from prunning import prune_tree
-
-class Metrics:
-    def __init__(self):
-        self.metric_dict = {
-            'confusion_matrix': [],
-            'precision': [],
-            'recall': [],
-            'accuracy': [],
-            'f1_score': [],
-            'depth': []
-        }
-    
-    def add_metrics(self, conf, acc, prec, rec, f1, dep):
-        """ Adds values to a metric dictionary."""
-        self.metric_dict['confusion_matrix'].append(conf)
-        self.metric_dict['precision'].append(prec)
-        self.metric_dict['recall'].append(rec)
-        self.metric_dict['accuracy'].append(acc)
-        self.metric_dict['f1_score'].append(f1)
-        self.metric_dict['depth'].append(dep)
-    
-    def get_avg_metrics(self):
-        """ Return avg metrics dictionary."""
-        avg_metrics = {}
-        avg_metrics['confusion_matrix'] = np.average(
-            np.array(self.metric_dict['confusion_matrix']), axis=0)
-        avg_metrics['accuracy']  = np.average(
-            np.array(self.metric_dict['accuracy']), axis=0)
-        avg_metrics['recall']  = np.average(
-            np.array(self.metric_dict['recall']), axis=0)
-        avg_metrics['precision']  = np.average(
-            np.array(self.metric_dict['precision']), axis=0)
-        avg_metrics['f1_score']  = np.average(
-            np.array(self.metric_dict['f1_score']), axis=0)
-        
-        return avg_metrics
-
 
 
 def train_test_k_fold(n_folds, n_instances):
