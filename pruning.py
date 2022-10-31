@@ -1,8 +1,8 @@
 import numpy as np
 
 
-def get_prunning_result(node, val_dataset):
-    """ Check if prunning the node improves accuracy on val_dataset."""
+def get_pruning_result(node, val_dataset):
+    """ Check if pruning the node improves accuracy on val_dataset."""
     x_val, y_val = val_dataset[:,:-1], val_dataset[:,-1]
     
     # get indices of the instances that do not end up in this node
@@ -70,9 +70,9 @@ def prune_tree(node, val_dataset):
     # check if the current node is a preleaf node
     if node.is_preleaf():
         # check if pruning it improves accuracy on validation dataset
-        n_correct_change = get_prunning_result(node, val_dataset)
+        n_correct_change = get_pruning_result(node, val_dataset)
         if n_correct_change >= 0:
-            ###print(f"Prunning node: {node} improves accuracy by {n_correct_change}")
+            ###print(f"pruning node: {node} improves accuracy by {n_correct_change}")
             # prune the node
             node.leaf = True 
             

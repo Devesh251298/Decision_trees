@@ -1,7 +1,7 @@
 from evaluation_metrics import evaluate, Metrics
 from decision_tree_classifier import DecisionTree, DecisionTree_Classifier
 import numpy as np
-from prunning import prune_tree
+from pruning import prune_tree
 
 
 def train_test_k_fold(n_folds, n_instances):
@@ -129,7 +129,7 @@ def nested_cross_validation(dataset, k=10):
             classifier = DecisionTree_Classifier()
             classifier.fit(train_dataset)
             
-            # compute the evaluation metrics before prunning
+            # compute the evaluation metrics before pruning
             conf, acc, prec, rec, f1 = evaluate(classifier, test_dataset)
             dep = classifier.compute_depth(classifier.dtree, 0)
             eval_metrics.add_metrics(conf, acc, prec, rec, f1, dep)
@@ -138,7 +138,7 @@ def nested_cross_validation(dataset, k=10):
             # prune the classifier using the validation dataset
             prune_tree(classifier.dtree, val_dataset)
             
-            # compute the evaluation metrics after prunning
+            # compute the evaluation metrics after pruning
             conf, acc, prec, rec, f1 = evaluate(classifier, test_dataset)
             dep = classifier.compute_depth(classifier.dtree, 0)
             prun_eval_metrics.add_metrics(conf, acc, prec, rec, f1, dep)
