@@ -88,7 +88,7 @@ class Metrics:
         }
     
     def add_metrics(self, conf, acc, prec, rec, f1, dep):
-        """ Adds values to a metric dictionary."""
+        """ Adds values to the metric dictionary."""
         self.metric_dict['confusion_matrix'].append(conf)
         self.metric_dict['precision'].append(prec)
         self.metric_dict['recall'].append(rec)
@@ -109,6 +109,8 @@ class Metrics:
             np.array(self.metric_dict['precision']), axis=0)
         avg_metrics['f1_score']  = np.average(
             np.array(self.metric_dict['f1_score']), axis=0)
+        avg_metrics['depth']  = np.average(
+            np.array(self.metric_dict['depth']), axis=0)
         
         return avg_metrics
 
