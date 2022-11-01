@@ -1,7 +1,5 @@
 from find_split import find_split
 import numpy as np
-from sklearn.tree import DecisionTreeClassifier
-from sklearn import tree
 import copy
 
 class DecisionTree:
