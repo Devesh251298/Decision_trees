@@ -99,7 +99,11 @@ def test_visualise():
     # clf = DecisionTreeClassifier(criterion = "entropy")
     # clf.fit(dataset[:,:-1], dataset[:,-1])
     # tree.plot_tree(clf)
-    max_depth = 10
+
+    dtree = DecisionTree_Classifier()
+    dtree.fit(dataset)
+
+    max_depth = dtree.compute_depth(dtree.dtree, 0)
     grid = np.zeros((max_depth+1,np.power(2,max_depth+1)))
     grid_x = np.zeros((max_depth+1,np.power(2,max_depth+1)))
     grid_y = np.zeros((max_depth+1,np.power(2,max_depth+1)))
@@ -110,16 +114,13 @@ def test_visualise():
 
         for j in range(len(grid_x[i])):
             grid_x[i,j] = (scale)*(j - int(np.power(2,max_depth+1)/2)) + 2
-    dtree = DecisionTree_Classifier()
-    dtree.fit(dataset)
-    
     
     fig, ax = plt.subplots(figsize=(10,10))
     visualise_decision_tree(node=dtree.dtree, tree=dtree, grid = grid, grid_x = grid_x, grid_y = grid_y,x=np.power(2,max_depth), y=max_depth, ax=ax, max_depth=max_depth, max_x=6, max_y=5)
     ax.margins(0.2, 0.2)  
     ax.axis('off')
    
-    plt.ylim(0.45, 1)
+    plt.ylim(0.1*(max_depth-5.5), 0.1*max_depth)
     plt.show()
      
 if __name__ == "__main__":
