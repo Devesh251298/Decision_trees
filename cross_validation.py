@@ -106,9 +106,7 @@ def nested_cross_validation(dataset, k=10):
     
     # instantiate Metrics dict. store evaluation metrics for unprunned trees
     eval_metrics = Metrics()
-    prun_eval_metrics = Metrics()
     trees = []
-    prun_trees = []
     
     # outer cross validation loop
     for i, (trainval_indices, test_indices) in enumerate(outter_split_indices):
@@ -129,24 +127,17 @@ def nested_cross_validation(dataset, k=10):
             classifier = DecisionTree_Classifier()
             classifier.fit(train_dataset)
             
-            # compute the evaluation metrics before pruning
-            conf, acc, prec, rec, f1 = evaluate(classifier, test_dataset)
-            dep = classifier.compute_depth(classifier.dtree, 0)
-            eval_metrics.add_metrics(conf, acc, prec, rec, f1, dep)
-            trees.append(classifier)
-            
             # prune the classifier using the validation dataset
             prune_tree(classifier.dtree, val_dataset)
             
             # compute the evaluation metrics after pruning
             conf, acc, prec, rec, f1 = evaluate(classifier, test_dataset)
             dep = classifier.compute_depth(classifier.dtree, 0)
-            prun_eval_metrics.add_metrics(conf, acc, prec, rec, f1, dep)
-            prun_trees.append(classifier)
+            eval_metrics.add_metrics(conf, acc, prec, rec, f1, dep)
+            trees.append(classifier)
     
     avg_metrics = eval_metrics.get_avg_metrics()
-    prun_avg_metrics = prun_eval_metrics.get_avg_metrics()
 
-    return trees, avg_metrics, prun_trees, prun_avg_metrics
+    return trees, avg_metrics
 
 

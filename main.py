@@ -30,11 +30,9 @@ if __name__ == '__main__':
 
     # Perform nested 10-fold cross validation with pruning
     print("Running nested 10-fold cross-validation on clean dataset...")
-    unprun_trees, unprun_metrics, prun_trees, prun_metrics = \
-        nested_cross_validation(clean_dataset)
+    prun_trees, prun_metrics = nested_cross_validation(clean_dataset)
     print("Running nested 10-fold cross-validation on noisy dataset...")
-    noisy_unprun_trees, noisy_unprun_metrics, noisy_prun_trees, noisy_prun_metrics = \
-        nested_cross_validation(noisy_dataset)
+    noisy_prun_trees, noisy_prun_metrics = nested_cross_validation(noisy_dataset)
     
     # Print answers for the report
     
@@ -49,12 +47,8 @@ if __name__ == '__main__':
     #### Report - Step 4
     # Display evaluation metrics for nested 10-fold cv with pruning
     print(60*'-'+"\n Step 4 - nested 10-fold cross-validation with pruning:\n"+60*'-')
-    print(60*'-'+"\nEvaluation metrics on clean dataset (before pruning):\n"+60*'-')
-    display_metrics(unprun_metrics)
     print(60*'-'+"\nEvaluation metrics on clean dataset (after pruning):\n"+60*'-')
     display_metrics(prun_metrics)
-    print(60*'-'+"\nEvaluation metrics on noisy dataset (before pruning):\n"+60*'-')
-    display_metrics(noisy_unprun_metrics)
     print(60*'-'+"\nEvaluation metrics on noisy dataset (after pruning):\n"+60*'-')
     display_metrics(noisy_prun_metrics)
 
