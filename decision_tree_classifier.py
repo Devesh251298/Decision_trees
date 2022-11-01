@@ -85,18 +85,17 @@ class DecisionTreeClassifier():
         grid_x = np.zeros((max_depth+1,np.power(2,max_depth+1)))
         grid_y = np.zeros((max_depth+1,np.power(2,max_depth+1)))
         scale = 5
-        step = scale/max_depth
+        step = 100000*scale/max_depth
         for i in range(max_depth+1):
-            grid_y[i,:] = 0.1*i
+            grid_y[i,:] = 0.05*i
         for j in range(np.power(2,max_depth+1)):
             grid_x[:,j] = (scale)*(j - int(np.power(2,max_depth+1)/2)) + 2
-        
         fig, ax = plt.subplots(figsize=(10,10))
         visualise_decision_tree(node=self.dtree, tree=self, grid = grid, grid_x = grid_x, grid_y = grid_y,x=np.power(2,max_depth), y=max_depth, ax=ax, max_depth=max_depth, max_x=6, max_y=5)
-        ax.margins(0.2, 0.2)  
+        ax.margins(0.01, 0.01)  
         ax.axis('off')
        
-        plt.ylim(0.1*(max_depth-5.5), 0.1*max_depth)
+        # plt.ylim(0.1*(max_depth), 0.1*max_depth)
         plt.savefig(f'Plots/DT_{name}.png')
 
 

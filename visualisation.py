@@ -11,7 +11,7 @@ def visualise_decision_tree(node, tree, ax, x, y, grid = [], grid_x = [], grid_y
                 ha="center",
                 va="center",
                 arrowprops=dict(arrowstyle="<-",edgecolor=plt.rcParams["text.color"]),
-                fontsize=5
+                fontsize=3
                 )
     # Empty list for points defining the lines that connect the nodes
     segments = [] 
