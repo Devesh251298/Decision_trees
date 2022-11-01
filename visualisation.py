@@ -1,4 +1,3 @@
-from decision_tree_classifier import DecisionTree_Classifier
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
@@ -123,39 +122,4 @@ def visualise_decision_tree(node, tree, ax, x, y, grid = [], grid_x = [], grid_y
                 # Run function recursively for the node to the right, adding a level of depth and with the updated x,y parameters
                 visualise_decision_tree(node.right, tree, ax, xr, yr, grid, grid_x, grid_y,max_x, max_y, depth=depth + 1,max_depth=max_depth)
 
-
-def test_visualise():
-
-    # Load dataset and fit it with the decision tree classifier
-    dataset = np.loadtxt("wifi_db/clean_dataset.txt", dtype=float)
-    dtree = DecisionTree_Classifier()
-    dtree.fit(dataset)
-
-    max_depth = dtree.compute_depth(dtree.dtree, 0)
-
-    # Initialise grid for scaling of decision tree visualisation
-    grid = np.zeros((max_depth+1,np.power(2,max_depth+1)))
-    grid_x = np.zeros((max_depth+1,np.power(2,max_depth+1)))
-    grid_y = np.zeros((max_depth+1,np.power(2,max_depth+1)))
-
-    # Scaling factor
-    scale = 5
-    for i in range(max_depth+1):
-        # Compute the different scales of the grid for x and y according to the depth of the graph
-        grid_y[i,:] = 0.1*i
-
-        for j in range(len(grid_x[i])):
-            grid_x[i,j] = (scale)*(j - int(np.power(2,max_depth+1)/2)) + 2
-    
-    # Initialise figure
-    fig, ax = plt.subplots(figsize=(10,10))
-    visualise_decision_tree(node=dtree.dtree, tree=dtree, grid = grid, grid_x = grid_x, grid_y = grid_y,x=np.power(2,max_depth), y=max_depth, ax=ax, max_depth=max_depth, max_x=6, max_y=5)
-    ax.margins(0.2, 0.2)  
-    ax.axis('off') # Remove axis
-   
-    plt.ylim(0.1*(max_depth-5.5), 0.1*max_depth)
-    plt.show()
-     
-if __name__ == "__main__":
-    test_visualise()
     

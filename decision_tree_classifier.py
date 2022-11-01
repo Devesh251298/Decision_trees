@@ -1,6 +1,11 @@
-from find_split import find_split
 import numpy as np
 import copy
+from matplotlib.patches import BoxStyle
+import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
+from matplotlib import colors as mcolors
+from visualisation import visualise_decision_tree
+from find_split import find_split
 
 class DecisionTree:
     def __init__(self, attribute=0, value=-1, left=None, right=None, 
@@ -24,7 +29,7 @@ class DecisionTree:
             return True
         return False
 
-class DecisionTree_Classifier():
+class DecisionTreeClassifier():
     def __init__(self):
         self.dtree = None
         self.depth = 0
@@ -74,9 +79,30 @@ class DecisionTree_Classifier():
             return depth
         return max(self.compute_depth(node.left,depth+1), self.compute_depth(node.right,depth+1))
 
+    def save_fig(self, name):
+        max_depth = self.compute_depth(self.dtree, 0)
+        grid = np.zeros((max_depth+1,np.power(2,max_depth+1)))
+        grid_x = np.zeros((max_depth+1,np.power(2,max_depth+1)))
+        grid_y = np.zeros((max_depth+1,np.power(2,max_depth+1)))
+        scale = 5
+        step = scale/max_depth
+        for i in range(max_depth+1):
+            grid_y[i,:] = 0.1*i
+        for j in range(np.power(2,max_depth+1)):
+            grid_x[:,j] = (scale)*(j - int(np.power(2,max_depth+1)/2)) + 2
+        
+        fig, ax = plt.subplots(figsize=(10,10))
+        visualise_decision_tree(node=self.dtree, tree=self, grid = grid, grid_x = grid_x, grid_y = grid_y,x=np.power(2,max_depth), y=max_depth, ax=ax, max_depth=max_depth, max_x=6, max_y=5)
+        ax.margins(0.2, 0.2)  
+        ax.axis('off')
+       
+        plt.ylim(0.1*(max_depth-5.5), 0.1*max_depth)
+        plt.savefig(f'Plots/DT_{name}.png')
+
+
 def test_decision_tree():
     dataset = np.loadtxt("wifi_db/noisy_dataset.txt", dtype=float)
-    dtree = DecisionTree_Classifier()
+    dtree = DecisionTreeClassifier()
     dtree.fit(dataset)
     # parse_tree(dtree.dtree)
     output, actual = dtree.predict(dataset)
@@ -86,26 +112,7 @@ def test_decision_tree():
         if output[i] == actual[i]:
             count+=1
 
-    print(cross_validation(dataset, 10))
-
-    clf = DecisionTreeClassifier(criterion = "entropy")
-    print(dataset[:,:-1].shape,dataset[:,-1].shape)
-    clf.fit(dataset[:,:-1], dataset[:,-1])
-
-    predictions = clf.predict(dataset[:,:-1])
-
-    from sklearn.metrics import accuracy_score
-    print("Overall Accuracy = ", (count*100)/len(output))
-    print(accuracy_score(dataset[:,-1], predictions))
-
-    text_representation = tree.export_text(clf)
-    print(text_representation)
-
     parse_tree(dtree.dtree)
-
-    print(dtree.depth)
-    print(clf.tree_.max_depth)
-
 
 def parse_tree(node):
 

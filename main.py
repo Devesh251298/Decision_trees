@@ -1,3 +1,5 @@
+import os
+import shutil
 import numpy as np
 from cross_validation import cross_validation, nested_cross_validation
 
@@ -18,15 +20,24 @@ def display_metrics(metric_dict):
 
 
 if __name__ == '__main__':
+    if os.path.exists('Plots'):
+        shutil.rmtree('Plots')
+        os.mkdir('Plots')
+    else:
+        os.mkdir('Plots')
+    # File name
+    clean_dataset_name = 'clean_dataset.txt'
+    noisy_dataset_name = 'noisy_dataset.txt'
+
     # Load data
-    clean_dataset = load_data('wifi_db/clean_dataset.txt')
-    noisy_dataset = load_data('wifi_db/noisy_dataset.txt')
+    clean_dataset = load_data(f'wifi_db/{clean_dataset_name}')
+    noisy_dataset = load_data(f'wifi_db/{noisy_dataset_name}')
     
     # Perform 10-fold cross validation 
     print("Running 10-fold cross-validation on clean dataset...")
-    trees, avg_metrics = cross_validation(clean_dataset)
+    trees, avg_metrics = cross_validation(clean_dataset_name)
     print("Running 10-fold cross-validation on noisy dataset...")
-    noisy_trees, noisy_avg_metrics = cross_validation(noisy_dataset)
+    noisy_trees, noisy_avg_metrics = cross_validation(noisy_dataset_name)
 
     # Perform nested 10-fold cross validation with pruning
     print("Running nested 10-fold cross-validation on clean dataset...")

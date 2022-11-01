@@ -1,5 +1,5 @@
 from evaluation_metrics import evaluate, Metrics
-from decision_tree_classifier import DecisionTree, DecisionTree_Classifier
+from decision_tree_classifier import DecisionTree, DecisionTreeClassifier
 import numpy as np
 from pruning import prune_tree
 
@@ -28,7 +28,7 @@ def train_test_k_fold(n_folds, n_instances):
     return folds
 
 
-def cross_validation(dataset, k=10):
+def cross_validation(dataset_name, k=10):
     """ Evaluate.
     
     1) Split dataset into 10 parts
@@ -46,6 +46,8 @@ def cross_validation(dataset, k=10):
         f1_measure
     """
     # split dataset into k folds
+    dataset = np.loadtxt(f'wifi_db/{dataset_name}')
+
     n_instances = dataset.shape[0]
     split_indices = train_test_k_fold(k, n_instances)
     
@@ -61,8 +63,8 @@ def cross_validation(dataset, k=10):
         train_dataset = dataset[train_indices,:]
         test_dataset = dataset[test_indices,:]
         
-        # create an instance of DecisionTree_Classifier
-        classifier = DecisionTree_Classifier()
+        # create an instance of DecisionTreeClassifier
+        classifier = DecisionTreeClassifier()
         
         # train the classifier with the dataset
         classifier.fit(train_dataset)
@@ -72,6 +74,9 @@ def cross_validation(dataset, k=10):
     
         # compute depth of the trained tree
         dep = classifier.compute_depth(classifier.dtree, 0)
+
+        # saves the decision tree visualization in the Plots folder
+        classifier.save_fig(dataset_name.split('.')[0]+'_'+str(i))
 
         # update the k fold metrics dictionary
         eval_metrics.add_metrics(conf, acc, prec, rec, f1, dep)
@@ -124,7 +129,7 @@ def nested_cross_validation(dataset, k=10):
             val_dataset = trainval_dataset[val_indices,:]
 
             # train a DecisionTree classifier on the train dataset
-            classifier = DecisionTree_Classifier()
+            classifier = DecisionTreeClassifier()
             classifier.fit(train_dataset)
             
             # prune the classifier using the validation dataset
