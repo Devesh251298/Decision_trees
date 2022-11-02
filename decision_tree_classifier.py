@@ -155,8 +155,8 @@ def test_decision_tree():
     dtree = DecisionTreeClassifier()
     dtree.fit(dataset)
     # parse_tree(dtree.dtree)
-    output, actual = dtree.predict(dataset)
-
+    output = dtree.predict(dataset)
+    actual = dataset[:,-1]
     count = 0
     for i in range(len(output)):
         if output[i] == actual[i]:
