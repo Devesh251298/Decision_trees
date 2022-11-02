@@ -25,6 +25,7 @@ class DecisionTree:
         return f"DecisionTree(Attr : {self.attribute}, Value : {self.value}, Depth : {self.depth}, Label : {self.label}, Leaf: {self.leaf}, Instances: {self.n_instances})"
     
     def is_preleaf(self):
+        """Checks if the node is a preleaf"""
         if self.left.leaf == True and self.right.leaf == True:
             return True
         return False
@@ -35,9 +36,27 @@ class DecisionTreeClassifier():
         self.depth = 0
 
     def fit(self, dataset):
+        """fit is called in order to train the dataset
+        Args:
+            dataset (np.ndarray)
+        Returns:
+            None
+        """
         self.dtree, self.depth = self.decision_tree_learning(dataset,0)
     
     def decision_tree_learning(self, training_dataset, depth):
+        """decision_tree_learning is called inside fit to
+           train the decision tree. It calls find_split in order
+           to find the optimal point for split and uses it to 
+           create nodes for the tree
+
+        Args:
+            training_dataset (np.ndarray)
+            depth (int)
+        Returns:
+            dtree (DecisionTree) : Decision Tree root node
+            depth (int) : Max Depth of the tree
+        """
         output = np.unique(training_dataset[:,-1])
         n_instances = training_dataset.shape[0]
         if output.shape[0]==1:
@@ -55,6 +74,14 @@ class DecisionTreeClassifier():
         return dtree, max(left_depth, right_depth)
 
     def predict(self, x_test):
+        """predict takes in test input dataset and gives
+           the decision tree output predicted class as the output
+
+        Args:
+            x_test (np.ndarray)
+        Returns:
+            y_pred (np.ndarray)
+        """
         y_pred = np.zeros(x_test.shape[0])
         for i in range(x_test.shape[0]):
             tree = self.dtree
@@ -69,17 +96,42 @@ class DecisionTreeClassifier():
         return y_pred
     
     def compute_accuracy(self, x, y):
+        """compute_accuracy give the accuracy of the tree given 
+            some input test data x and its actual output y
+
+        Args:
+            x (np.ndarray) : input test data
+            y (np.ndarray) : actual output test data
+        Returns:
+            accuracy (float)
+        """
         y_pred = self.predict(x)
         n_correct = (y_pred == y).sum()
         n_total = y.shape[0]
         return n_correct/n_total
 
     def compute_depth(self, node, depth):
+        """compute_depth computes the depth of a tree given a node
+
+        Args:
+            node (DecisionTree)
+            depth (int) 
+        Returns:
+            depth (int)
+        """
         if node.leaf:
             return depth
         return max(self.compute_depth(node.left,depth+1), self.compute_depth(node.right,depth+1))
 
     def save_fig(self, name):
+        """save_fig is a visualization function which given a file name
+           will save the decision tree's visualization in a Plots folder
+
+        Args:
+            name (String)
+        Returns:
+            None
+        """
         max_depth = self.compute_depth(self.dtree, 0)
         grid = np.zeros((max_depth+1,np.power(2,max_depth+1)))
         grid_x = np.zeros((max_depth+1,np.power(2,max_depth+1)))
@@ -95,7 +147,6 @@ class DecisionTreeClassifier():
         ax.margins(0.01, 0.01)  
         ax.axis('off')
        
-        # plt.ylim(0.1*(max_depth), 0.1*max_depth)
         plt.savefig(f'Plots/DT_{name}.png')
 
 
