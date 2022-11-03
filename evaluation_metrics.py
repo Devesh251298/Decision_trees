@@ -77,6 +77,8 @@ def get_f1_score(precision, recall):
 
 
 class Metrics:
+    """ Class to store the metrics of all our trained decision trees,
+        and compute their averages."""
     def __init__(self):
         self.metric_dict = {
             'confusion_matrix': [],
@@ -88,7 +90,8 @@ class Metrics:
         }
     
     def add_metrics(self, conf, acc, prec, rec, f1, dep):
-        """ Adds values to the metric dictionary."""
+        """ Adds evaluation metrics of a decision tree to the metric
+            dictionary."""
         self.metric_dict['confusion_matrix'].append(conf)
         self.metric_dict['precision'].append(prec)
         self.metric_dict['recall'].append(rec)
@@ -97,7 +100,8 @@ class Metrics:
         self.metric_dict['depth'].append(dep)
     
     def get_avg_metrics(self):
-        """ Return avg metrics dictionary."""
+        """ Computes the average of all evaluation metrics in the metrics
+         dictionary and returns a dictionary with the avg metrics."""
         avg_metrics = {}
         avg_metrics['confusion_matrix'] = np.average(
             np.array(self.metric_dict['confusion_matrix']), axis=0)
