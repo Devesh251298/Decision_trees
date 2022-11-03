@@ -2,7 +2,23 @@ import numpy as np
 
 
 def get_pruning_result(node, val_dataset):
-    """ Check if pruning the node improves accuracy on val_dataset."""
+    """ Check if pruning the node improves accuracy on val_dataset.
+    
+    Args:
+        node (DecisionTree): node in our DecisionTreeClassifier which
+            we need to decide whether to prune or not
+        val_dataset (np.ndarray, shape (N_val, #features + 1)):
+            validation dataset used to check accuracy pre-post pruning
+    
+    Returns:
+        change (int): change in the number of correct predictions of
+            our DecisionTreeClassifier if we prune the node
+            
+            change >= 0: pruning does not reduce prediction accuracy
+                on validation dataset
+            change < 0: pruning reduces prediction accuracy on the
+                validation dataset    
+    """
     x_val, y_val = val_dataset[:,:-1], val_dataset[:,-1]
     
     # get indices of the instances that do not end up in this node
@@ -50,8 +66,23 @@ def get_pruning_result(node, val_dataset):
 def prune_tree(node, val_dataset):
     ''' Prune the tree recursively.
     
+    This function recursively parses the tree in post-order style, and
+    for every parsed node it checks whether it is connected to two leafs
+    and it prunes the node if it does not result in a decrease in
+    prediction accuracy.
+    
+    The recursive tree parsing is done in post-order style because we 
+    need to check whether to prune child nodes before parent nodes,
+    since pruning a child could mean that the parent is now also connected
+    to two leave nodes, and therefore we might need to prune it.
+    
+    The function does not return anything because it modifies the
+    DecisionTree itself.
+    
     Args:
-        node (DecisionTree)
+        node (DecisionTree): root node of our DecisionTree classifier
+        val_dataset (np.ndarray, shape (N_val, #features + 1)):
+            validation dataset used to check accuracy pre-post pruning
     
     Returns:
         None
