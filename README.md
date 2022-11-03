@@ -60,14 +60,14 @@ This script contains the following three functions:
 
 - Cross Validation: Evaluates the performance of the decision tree by first splitting the dataset into k=10 parts, and then for each of the 10 iterations, training the decision three with the training dataset of the corresponding fold and getting the evaluation metrics for the test dataset of the fold.
 
-- Nested Cross Validation: Performs nested cross validation on a Decision Tree Classifier with pruning, it takes as input a dataset, and outputs two dictionaries, one containing the test metrics for each fold, and another containing the average test metrics accross the k fold.
+- Nested Cross Validation: Performs nested cross validation on a Decision Tree Classifier with pruning, it takes as input a dataset, and outputs a list of 90 (k*(k-1)) decision tree classifiers, and a dictionary containing the average test metrics accross the k*(k-1) fold.
 
 The evaluation metrics that are returned by both the cross validation and nested cross validation functions are confusion matrixs, accuracy, recall, precision, and F1-measure. 
 
 
 ## Pruning
 
-- Determine the advantages of replacing each node with a single leaf in relation to the validation error for each node that is directly connected to two leaves (defined according to the training set). A single leaf will take the place of the node if it reduces or does not modify the validation error. In order to optimise the efficiency of the model, the tree must be parsed numerous times until there are no longer any nodes connecting two leaves.
+- Determine the advantages of replacing each node with a single leaf in relation to the validation error for each node that is directly connected to two leaves. A single leaf will take the place of the node if it reduces or does not modify the validation error. In order to optimise the efficiency of the model, the tree must be parsed numerous times until there are no longer any nodes connecting two leaves.
 
 ## Visualisation and Plots
 
