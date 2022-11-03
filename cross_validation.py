@@ -29,21 +29,28 @@ def train_test_k_fold(n_folds, n_instances):
 
 
 def cross_validation(dataset_name, k=10):
-    """ Evaluate.
+    """ Train and test our DecisionTreeClassifier on the dataset 
+    stored in the path 'wifi_db/{dataset_name}' using k-fold cross-
+    validation.
     
-    1) Split dataset into 10 parts
-    2) Loop with 10 iterations. For each iteration:
-        - train decision tree with training dataset
-        - get evaluation metrics for the test dataset (get confusio
+    This function splits the dataset into k folds and performs k
+    train/test iterations. At each iteration, one fold is used for test
+    and the remaining k-1 folds are used to train the decision tree
+    classifier.
+    
     
     Args:
-        dataset (np.ndarray) 
+        dataset_name (str): name of the dataset we wish to use (which
+            needs to be stored in the path 'wifi_db/{dataset_name}')
+        k (int, default=10): number of folds used for train/test split
+
     Returns:
-        confusion_matrix
-        accuracy
-        recall
-        precision
-        f1_measure
+        trees (list[DecisionTreeClassifier]): list of length k containing
+            the trained decision tree classifiers
+        avg_metrics (dict, keys='str', values=np.ndarray): dictionary
+            containing the evaluation metrics computed on the test set
+             averaged over k trees.
+        
     """
     # split dataset into k folds
     dataset = np.loadtxt(f'wifi_db/{dataset_name}')
@@ -90,17 +97,35 @@ def cross_validation(dataset_name, k=10):
 
 
 def nested_cross_validation(dataset, k=10):
-    """Perform nested cross validation on a Decision Tree Classifier
-        with pruning.
+    """ Train and test our DecisionTreeClassifier on the dataset 
+    stored in the path 'wifi_db/{dataset_name}' using nested k-fold 
+    cross-validation with pruning.
+    
+    This function splits the dataset into k folds and performs nested 
+    cross-validation with an outer loop of k iterations and an inner loop
+    of k-1 iterations (total of k*(k-1) iterations).
+    
+    For each outer loop iteration, 1 fold is used for test and the other
+    k-1 folds are used for train/val. The train/val set is then split 
+    again into k-1 folds.
+    
+    For each inner loop iteration, the function uses 1 fold of the
+    train/val split for validation the remaining k-2 folds for training. 
+    It trains a decision tree classifier using the train set, and 
+    performs pruning using the validation set. After  pruning, the 
+    function computes the evaluation metrics on the separate test set.
     
     Args:
-        dataset (np.ndarray, shape Nx8)
-    
+        dataset_name (str): name of the dataset we wish to use (which
+            needs to be stored in the path 'wifi_db/{dataset_name}')
+        k (int, default=10): number of folds used for train/test split
+
     Returns:
-        k_fold_metrics = dictionary containing the test metrics for 
-            each fold
-        avg_metrics = dictionary containing the average test metrics
-            accross the k fold
+        trees (list[DecisionTreeClassifier]): list of length k containing
+            the trained decision tree classifiers
+        avg_metrics (dict, keys='str', values=np.ndarray): dictionary
+            containing the evaluation metrics computed on the test set
+             averaged over k*(k-1) trees.
     """
     n_outer_folds = k
     n_inner_folds = k-1
