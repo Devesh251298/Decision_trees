@@ -60,7 +60,7 @@ This script contains the following three functions:
 
 - Cross Validation: Evaluates the performance of the decision tree by first splitting the dataset into k=10 parts, and then for each of the 10 iterations, training the decision three with the training dataset of the corresponding fold and getting the evaluation metrics for the test dataset of the fold.
 
-- Nested Cross Validation: Performs nested cross validation on a Decision Tree Classifier with pruning, it takes as input a dataset, and outputs a list of k*(k-1) decision tree classifiers (for k=10, it contains 90 trees), and a dictionary containing the average test metrics accross the k*(k-1) fold.
+- Nested Cross Validation: Performs nested cross validation on a Decision Tree Classifier with pruning, it takes as input a dataset, and outputs a list of k*(k-1) decision tree classifiers (for k=10, it contains 90 trees), and a dictionary containing the average test metrics accross the all the folds.
 
 The evaluation metrics that are returned by both the cross validation and nested cross validation functions are confusion matrixs, accuracy, recall, precision, and F1-measure. 
 
